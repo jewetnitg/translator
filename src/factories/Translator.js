@@ -13,13 +13,13 @@ import escapeRegExp from '../helpers/escapeRegExp';
  *
  * @property locales {Object<Object>} Hashmap with locales
  * @property defaultLocale {String} Name/key of the default locale
+ * @property delimiters {Array<String>} Array with two items, the start and end delimiter for template variables respectively
  * @property options {Object} The options object passed in
- *
- * @todo implement converters
  *
  * @example
  * const translator = Translator({
  *   defaultLocale: 'en-GB',
+ *   delimiters: ['{{', '}}'],
  *   locales: {
  *     'en-GB': {
  *       words: {
@@ -61,6 +61,15 @@ function Translator(options = {}) {
   return Object.create(Translator.prototype, props);
 }
 
+/**
+ * Defaults for the options passed into the {@link Translator} factory
+ *
+ * @name defaults
+ * @memberof Translator
+ * @static
+ * @type Object
+ * @property {Array<String>} [delimiters=['{{', '}}']] The start and end delimiter for template variables
+ */
 Translator.defaults = {
   delimiters: ['{{', '}}']
 };

@@ -1,17 +1,20 @@
 ```
 const translator = Translator({
   defaultLocale: 'en-GB',
+  delimiters: ['{{', '}}'],
   locales: {
     'en-GB': {
       words: {
-        'test': 'Test {{name}}!'
+        'test': {
+          'test2': 'Test {{name}}!'
+        }
       },
       converters: {}
     }
   }
 });
 
-const translated = translator.translate('test', {
+const translated = translator.translate('test.test2', {
   name: 'Bob'
 });
 
