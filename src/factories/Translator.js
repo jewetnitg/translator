@@ -2,6 +2,7 @@
  * @author rik
  */
 import _ from 'lodash';
+import escapeRegExp from '../helpers/escapeRegExp';
 
 /**
  * The Translator is in charge of executing policies. Policies can be provided when constructing or when constructed by using the {@link Translator#add} method, policies can be executed using the {@link Translator#execute} method. For information on the req object passed into policies, please refer to the documentation of the {@link Request}.
@@ -30,6 +31,11 @@ import _ from 'lodash';
  * });
  */
 function Translator(options = {}) {
+  _.defaults(options, Translator.defaults);
+
+  const startDelimiter = escapeRegExp(options.delimiters[0]);
+  const endDelimiter = escapeRegExp(options.delimiters[1]);
+
   const props = {
     locales: {
       value: options.locales || {}
@@ -38,6 +44,15 @@ function Translator(options = {}) {
       value: options.defaultLocale,
       writable: true
     },
+    startDelimiterRegex: {
+      value: new RegExp(`^${startDelimiter}`)
+    },
+    endDelimiterRegex: {
+      value: new RegExp(`${endDelimiter}$`)
+    },
+    templateRegex: {
+      value: new RegExp(`${startDelimiter}\\s*([\\s|\\S]+)\\s*${endDelimiter}`, 'g')
+    },
     options: {
       value: options
     }
@@ -45,6 +60,10 @@ function Translator(options = {}) {
 
   return Object.create(Translator.prototype, props);
 }
+
+Translator.defaults = {
+  delimiters: ['{{', '}}']
+};
 
 Translator.prototype = {
 
@@ -140,7 +159,7 @@ Translator.prototype = {
   },
 
   /**
-   * Translates a word with data
+   * Translates a word with data, key may be a path (like 'basic.yes')
    *
    * @method translate
    * @memberof Translator
@@ -152,8 +171,9 @@ Translator.prototype = {
    * @returns {String}
    *
    * @example
-   * translator.translate('basic.greet', {name: 'BOB'});
-   * // returns something like 'hello BOB!'
+   * // where the translation for 'basic.greet' is 'hello {{model.name}}!'
+   * < translator.translate('basic.greet', {model: {name: 'BOB'}});
+   * > "hello BOB!"
    */
   translate(key, data = {}) {
     if (!this.currentLocale) {
@@ -163,14 +183,17 @@ Translator.prototype = {
     let translation = _.get(this.currentLocale.words, key);
 
     if (!translation) {
-      throw new Error(`Can't translate '${key}', word not defined.`);
+      throw new Error(`Can't find translation for '${key}', translation not found for the current locale '${this.locale}'.`);
     }
 
-    const variableMatches = translation.match(/\{\{\s*([\s|\S]+)\s*\}\}/g);
+    const variableMatches = translation.match(this.templateRegex);
 
     _.each(variableMatches, (match) => {
-      const key = match.replace(/\{|\}|\s/g, '');
-      translation = translation.replace(match, data[key]);
+      const key = match.replace(this.startDelimiterRegex, '').replace(this.endDelimiterRegex, '').replace(/\s+/g, '');
+      let val = _.get(data, key);
+      val = typeof val !== 'undefined' ? val : "";
+
+      translation = translation.replace(match, val);
     });
 
     return translation;

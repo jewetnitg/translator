@@ -1,6 +1,6 @@
 {
   "name": "frontend-translator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "frontend-translator serves to make translations easier.",
   "main": "index.js",
   "scripts": {

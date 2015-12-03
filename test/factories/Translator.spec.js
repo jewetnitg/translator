@@ -159,6 +159,32 @@ describe(`Translator`, () => {
         done();
       });
 
+      it(`should use the delimiters provided when constructing`, (done) => {
+        const value = '123';
+        const expected = `test ${value} translation`;
+        const translation = `test <@=value@> translation`;
+
+        const translator = Translator({
+          defaultLocale: 'test',
+          delimiters: ['<@=', '@>'],
+          locales: {
+            'test': {
+              words: {
+                'test': translation
+              },
+              converters: {}
+            }
+          }
+        });
+
+        const actual = translator.translate('test', {
+          value
+        });
+
+        expect(actual).to.equal(expected);
+        done();
+      });
+
       it(`should get the word deeply`, (done) => {
         const expected = 'test translation';
 
@@ -205,6 +231,56 @@ describe(`Translator`, () => {
 
         const actual = translator.translate('test', {
           value
+        });
+
+        expect(actual).to.equal(expected);
+        done();
+      });
+
+      it(`should replace template variables with no values with an empty string`, (done) => {
+        const value = '123';
+        const expected = `test  translation`;
+        const translation = `test {{value}} translation`;
+
+        const translator = Translator({
+          defaultLocale: 'test',
+          locales: {
+            'test': {
+              words: {
+                'test': translation
+              },
+              converters: {}
+            }
+          }
+        });
+
+        const actual = translator.translate('test');
+
+        expect(actual).to.equal(expected);
+        done();
+      });
+
+      it(`should get the value to be filled in deeply`, (done) => {
+        const value = '123';
+        const expected = `test ${value} translation`;
+        const translation = `test {{test.value}} translation`;
+
+        const translator = Translator({
+          defaultLocale: 'test',
+          locales: {
+            'test': {
+              words: {
+                'test': translation
+              },
+              converters: {}
+            }
+          }
+        });
+
+        const actual = translator.translate('test', {
+          test: {
+            value
+          }
         });
 
         expect(actual).to.equal(expected);
