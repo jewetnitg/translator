@@ -1,3 +1,5 @@
-import PolicyExecutor from './src/factories/Translator';
+import 'babel-polyfill';
 
-export default PolicyExecutor;
+import Translator from './src/factories/Translator';
+
+export default Translator;
