@@ -140,8 +140,8 @@ Translator.prototype = {
   add(name, localeDefinition) {
     const type = typeof name;
     if (type === 'object') {
-      _.each(name, (_languageDefinition, _name) => {
-        this.add(_name, _languageDefinition);
+      _.each(name, (_localeDefinition, _name) => {
+        this.add(_name, _localeDefinition);
       });
     } else if (type === 'string') {
       this.locales[name] = localeDefinition;
