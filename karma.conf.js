@@ -59,30 +59,8 @@ module.exports = function (config) {
     ],
 
     coverageReporter: {
-      dir: './build/coverage',
-      reporters: [
-        {
-
-          file: 'lcov.txt',
-          type: 'lcovonly'
-        },
-        {
-          file: 'cobertura.txt',
-          type: 'cobertura'
-        },
-        {
-          file: 'teamcity.txt',
-          type: 'teamcity'
-        },
-        {
-          file: 'table.txt',
-          type: 'text'
-        },
-        {
-          file: 'summary.txt',
-          type: 'text-summary'
-        }
-      ]
+      type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
+      dir: 'coverage/'
     },
 
 
