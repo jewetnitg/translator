@@ -38,6 +38,7 @@ module.exports = function (config) {
     plugins: [
       'karma-spec-reporter',
       'karma-coverage',
+      'karma-coveralls',
       'karma-browserify',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher',
@@ -53,13 +54,15 @@ module.exports = function (config) {
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: [
       'spec',
-      'coverage'
+      'coverage',
+      'coveralls'
     ],
 
     coverageReporter: {
       dir: './build/coverage',
       reporters: [
         {
+
           file: 'lcov.txt',
           type: 'lcovonly'
         },
